@@ -11,11 +11,8 @@
 .envrc
 .venv
 venv
-media/
-node_modules
 
-app/Dockerfile
-app/entrypoint.sh
-data/
-
+data/*
+!data/.gitkeep
+!data/posts/.gitkeep
 .DS_Store

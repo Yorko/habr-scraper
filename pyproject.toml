@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "habr-scraper"
 version = "0.1.0"
-description = "Code scraping Habr posts"
-authors = ["Alex @c0ntribut0r"]
+description = "Code scraping Habr posts, by @c0ntribut0r"
+authors = ["Alex <dontknow@mail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"

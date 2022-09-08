@@ -21,12 +21,12 @@ class Habr:
         pool_maxsize=32,
     )
 
-    SITE_URL: ClassVar[str] = 'https://habr.com'
-    API_URL: ClassVar[str] = 'https://habr.com/kek/v2'
+    SITE_URL: ClassVar[str] = "https://habr.com"
+    API_URL: ClassVar[str] = "https://habr.com/kek/v2"
     TIMEOUT: ClassVar[int] = 10
 
     def __post_init__(self):
-        self.session.mount('https://', self.adapter)
+        self.session.mount("https://", self.adapter)
 
     @retry(
         reraise=True,
@@ -34,10 +34,10 @@ class Habr:
         stop=stop_after_attempt(20),
     )
     def request(self, method: str, path: str, **kwargs) -> requests.Response:
-        if path.startswith('/'):
+        if path.startswith("/"):
             path = self.BASE_URL + path
 
-        kwargs.setdefault('timeout', self.TIMEOUT)
+        kwargs.setdefault("timeout", self.TIMEOUT)
         response = self.session.request(method, path, **kwargs)
 
         if response.status_code == requests.codes.too_many_requests:
@@ -45,13 +45,13 @@ class Habr:
 
         return response
 
-    get = partialmethod(request, 'get')
-    post = partialmethod(request, 'post')
+    get = partialmethod(request, "get")
+    post = partialmethod(request, "post")
 
-    def iter_posts(self, flow: str = 'develop') -> Iterator[dict]:
+    def iter_posts(self, flow: str = "develop") -> Iterator[dict]:
         max_page = 10000
         for page in range(1, max_page):
-            log.debug(f'Scraping posts page {page}')
+            log.debug(f"Scraping posts page {page}")
             posts = self.get_posts(flow=flow, page=page)
             if not posts:
                 return
@@ -62,13 +62,13 @@ class Habr:
 
     def get_posts(self, flow: str, page: int = 1) -> List[dict]:
         response = self.get(
-            f'{self.API_URL}/articles/',
+            f"{self.API_URL}/articles/",
             params={
-                'flow': flow,
-                'sort': 'all',
-                'page': page,
-                'fl': 'ru',
-                'hl': 'ru',
+                "flow": flow,
+                "sort": "all",
+                "page": page,
+                "fl": "ru",
+                "hl": "ru",
             },
         )
         if not response.ok:
@@ -78,14 +78,14 @@ class Habr:
             response.raise_for_status()
 
         result = response.json()
-        return result['articleRefs'].values()
+        return result["articleRefs"].values()
 
     def get_post(self, id_: int | str) -> str:
-        return self.get(f'{self.SITE_URL}/ru/post/{id_}')
+        return self.get(f"{self.SITE_URL}/ru/post/{id_}")
 
     def get_post_content(self, id_: int | str) -> BeautifulSoup:
         html = self.get_post(id_).text
-        soup = BeautifulSoup(html, features='html.parser')
-        content = soup.find('div', {'id': 'post-content-body'})
+        soup = BeautifulSoup(html, features="html.parser")
+        content = soup.find("div", {"id": "post-content-body"})
         assert content
         return content
