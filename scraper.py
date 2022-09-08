@@ -1,8 +1,10 @@
 import json
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from multiprocessing import cpu_count
 from pathlib import Path
 from typing import Iterator, Optional
+import argparse
 
 from bs4 import BeautifulSoup
 from tqdm import tqdm
@@ -74,5 +76,19 @@ def download_python_snippets(posts_dir: Path = POSTS_DIR, num_threads: Optional[
             pass
 
 
+def parse_args():
+
+    parser = argparse.ArgumentParser(description='Scrape Habr code snippets.')
+    parser.add_argument('--fetch', action='store_true', help='Fetch Habr post IDs')
+    parser.add_argument('--download', action='store_true', help='Download code snippets from fetched post IDs.')
+
+    args = parser.parse_args()
+    
+    return args
+
 if __name__ == '__main__':
-    download_python_snippets()
+    args = parse_args()
+    if args.fetch:
+        fetch_posts()
+    if args.download:
+        download_python_snippets(num_threads=cpu_count())

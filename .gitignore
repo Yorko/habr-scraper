@@ -1,6 +1,7 @@
 *.pyc
 *.sqlite3
 *~
+*.log
 /docker-compose.yml
 /.idea/
 .vscode
@@ -16,3 +17,5 @@ node_modules
 app/Dockerfile
 app/entrypoint.sh
 data/
+
+.DS_Store
